@@ -503,17 +503,32 @@ o en <code>secrets.enc</code> si las guardaste con passphrase desde la CLI.</foo
             f"<td style='color:var(--mut)'>{d['nota']}</td></tr>"
             for d in r["detalle_posts"]) or "<tr><td colspan='6'>Sin posts aun.</td></tr>"
 
+        # Botones de descarga/retomar. Es una cadena normal (no f-string) para poder
+        # llevar llaves {} de CSS/JS sin escapar. Se inserta como {botones} abajo.
+        botones = (
+            '<div class="card" style="margin:14px 0;display:flex;gap:12px;flex-wrap:wrap;align-items:center">'
+            '<a href="/descargar/sistema" style="background:#238636;color:#fff;padding:11px 16px;'
+            'border-radius:8px;text-decoration:none;font-weight:650">⬇ Descargar sistema completo (.zip)</a>'
+            '<a href="/descargar/memoria" style="background:#1f6feb;color:#fff;padding:11px 16px;'
+            'border-radius:8px;text-decoration:none;font-weight:650">⬇ Descargar memoria del proyecto (.md)</a>'
+            '<button onclick="retomarArena(this)" style="background:#8957e5;color:#fff;padding:11px 16px;'
+            'border-radius:8px;border:0;font-weight:650;cursor:pointer">🔄 Retomar en Arena (copia la memoria)</button>'
+            '<span style="color:var(--mut);font-size:13px;max-width:340px">El botón morado copia la memoria y abre '
+            'Arena: ahí pégala (Ctrl+V) en un chat nuevo para retomar conmigo. No abre esta charla sola: yo no vivo '
+            'en esta web, la memoria vive en el archivo.</span>'
+            '</div>'
+            '<script>async function retomarArena(btn){try{const t=await (await fetch("/descargar/memoria")).text();'
+            'await navigator.clipboard.writeText(t);btn.innerText="✅ Memoria copiada — pégala en Arena";}'
+            'catch(e){btn.innerText="Abre Arena y pega la memoria";}window.open("https://arena.ai","_blank");}</script>'
+        )
+
         html = f"""<!doctype html><html lang="es"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Clipping OS</title><style>{CSS}</style>
 <h1>Clipping OS</h1>
 <p class="sub">Panel de rendimiento. Las cifras son del modelo de pago real: vistas
 verificadas, umbral minimo, tope por clip, comision de plataforma y presupuesto restante.</p>
-<div class="card" style="margin:14px 0;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-  <a href="/descargar/sistema" style="background:#238636;color:#fff;padding:11px 16px;border-radius:8px;text-decoration:none;font-weight:650">⬇ Descargar sistema completo (.zip)</a>
-  <a href="/descargar/memoria" style="background:#1f6feb;color:#fff;padding:11px 16px;border-radius:8px;text-decoration:none;font-weight:650">⬇ Descargar memoria del proyecto (.md)</a>
-  <span style="color:var(--mut);font-size:13px;max-width:320px">La memoria guarda todo el proyecto: pégala en un chat nuevo de Arena para retomar conmigo.</span>
-</div>
+{botones}
 <div class="grid">
  <div class="card"><div class="k">Ganancia estimada neta</div><div class="v money">${r['ganancia_estimada_neta_usd']:.2f}</div></div>
  <div class="card"><div class="k">Cobrado realmente</div><div class="v">${r['cobrado_real_usd']:.2f}</div></div>
