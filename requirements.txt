@@ -1,0 +1,10 @@
+# Sin dependencias obligatorias: todo el nucleo corre con la libreria estandar de Python 3.10+.
+#
+# Opcionales, solo si usas los modulos correspondientes:
+#
+#   requests>=2.31      # si prefieres requests en vez de urllib en publish.py
+#   flask>=3.0          # si quieres sustituir el panel stdlib por Flask
+#   openai>=1.30        # si usas brief_desde_llm() con el SDK en vez de HTTP directo
+#
+# Instalacion de todo:
+#   pip install requests flask openai

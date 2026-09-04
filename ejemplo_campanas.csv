@@ -1,0 +1,7 @@
+url,titulo,marca,categoria,cpm_usd,presupuesto_total,presupuesto_rest,plataformas_ok,min_views,cap_por_clip_usd,requiere_waitlist,reglas_texto
+https://ejemplo.whop.com/campana/alpha,"Campana Alpha - app de productividad",AlphaApp,software,2.50,20000,14500,tiktok|instagram|youtube,1000,250,0,"No afirmar productividad garantizada. Hashtag #AlphaApp obligatorio. Musica solo de biblioteca comercial."
+https://ejemplo.whop.com/campana/beta,"Campana Beta - curso de trading",BetaTrade,finanzas,4.00,8000,900,tiktok|instagram,2000,500,1,"Prohibido prometer rentabilidad. Prohibido mostrar cifras de ganancias."
+https://ejemplo.whop.com/campana/gamma,"Campana Gamma - suplemento",GammaFit,salud,1.20,15000,12000,tiktok,1000,100,0,"Prohibido cualquier claim de salud o cura. Solo mostrar producto."
+https://ejemplo.whop.com/campana/delta,"Campana Delta - casino",DeltaBet,apuestas,6.00,50000,48000,tiktok|instagram,500,1000,0,"Solo cuentas mayores de edad."
+https://ejemplo.whop.com/campana/epsilon,"Campana Epsilon - SaaS B2B",EpsilonSaaS,saas,1.80,30000,27000,tiktok|instagram|youtube,1000,300,0,"Sin musica con copyright. Mostrar pantalla real del producto."
+https://ejemplo.whop.com/campana/zeta,"Campana Zeta - baja paga",ZetaShop,retail,0.20,5000,4800,tiktok,1000,50,0,"Sin reglas especiales."

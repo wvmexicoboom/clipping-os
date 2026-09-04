@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<style>
+  :root{--bg:#0d1117;--card:#161b22;--line:#21262d;--tx:#e6edf3;--mut:#8b949e;--ok:#3fb950;--bad:#f85149;--acc:#58a6ff}
+  *{box-sizing:border-box}
+  body{width:390px;margin:0;background:var(--bg);color:var(--tx);
+       font:13px/1.5 ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif}
+  header{padding:14px 16px;border-bottom:1px solid var(--line)}
+  h1{margin:0;font-size:15px}p{margin:4px 0 0;color:var(--mut);font-size:12px}
+  main{padding:14px 16px}
+  label{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;
+        letter-spacing:.05em;margin:11px 0 4px}
+  input,select,textarea{width:100%;background:var(--card);border:1px solid var(--line);
+        color:var(--tx);border-radius:7px;padding:7px 9px;font:inherit;font-size:13px}
+  textarea{min-height:56px;resize:vertical}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  button{width:100%;margin-top:14px;background:var(--acc);color:#04121f;border:0;
+        border-radius:7px;padding:9px;font-weight:650;font-size:13px;cursor:pointer}
+  button.ghost{background:transparent;color:var(--tx);border:1px solid var(--line);font-weight:500}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .aviso{margin-top:12px;padding:9px 11px;border:1px solid #4d3800;background:#1d1600;
+        border-radius:7px;color:#d29922;font-size:11.5px}
+  ul{margin:8px 0 0;padding-left:17px;color:var(--mut);font-size:11.5px}
+  li{margin-bottom:3px}
+  .estado{margin-top:10px;font-size:12px;color:var(--ok)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Clipping OS</h1>
+  <p>Captura los datos de la campana que tienes abierta y expórtalos al pipeline.</p>
+</header>
+<main>
+  <label>URL de la campaña</label>
+  <input id="url" placeholder="https://whop.com/...">
+
+  <label>Marca</label>
+  <input id="marca" placeholder="Nombre de la marca o creador">
+
+  <div class="row">
+    <div><label>CPM (USD / 1k)</label><input id="cpm" type="number" step="0.01"></div>
+    <div><label>Categoría</label><input id="categoria"></div>
+  </div>
+
+  <div class="row">
+    <div><label>Pool total</label><input id="total" type="number"></div>
+    <div><label>Pool restante</label><input id="rest" type="number"></div>
+  </div>
+
+  <div class="row">
+    <div><label>Vistas mínimas</label><input id="minviews" type="number" value="0"></div>
+    <div><label>Tope por clip</label><input id="cap" type="number"></div>
+  </div>
+
+  <label>Plataformas elegibles</label>
+  <input id="plataformas" placeholder="tiktok|instagram|youtube" value="tiktok|instagram">
+
+  <label>Reglas del brief (copiadas de la campaña)</label>
+  <textarea id="reglas" placeholder="Claims prohibidos, hashtags obligatorios, música permitida…"></textarea>
+
+  <button id="capturar">Leer datos de la página</button>
+  <button id="guardar" class="ghost">Guardar campaña</button>
+  <button id="exportar" class="ghost">Exportar todo a CSV</button>
+
+  <div class="estado" id="estado"></div>
+
+  <div class="aviso">
+    Esta extensión <b>no</b> hace clics por ti ni rellena el compositor de TikTok o
+    Instagram. Automatizar la publicación viola sus términos y activa el filtro
+    anti-bot de la campaña, que anula las vistas y puede suspender la cuenta.
+    <ul>
+      <li>Sí: leer datos visibles, guardarlos y exportarlos.</li>
+      <li>No: publicar solo, seguir cuentas, dar likes, rotar sesiones.</li>
+    </ul>
+  </div>
+</main>
+<script src="popup.js"></script>
+</body>
+</html>

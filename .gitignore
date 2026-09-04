@@ -1,0 +1,12 @@
+config.json
+*.db
+salida/
+demo/
+assets/
+__pycache__/
+secrets.local.json
+secrets.enc
+*.log
+tunel_url.txt
+uploads/
+ACCESO.md

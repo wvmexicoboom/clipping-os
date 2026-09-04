@@ -1,0 +1,121 @@
+{
+  "_comentario": "Copia este archivo a config.json y rellena. NUNCA subas config.json a git.",
+  "operador": {
+    "nombre": "Tu nombre",
+    "pais": "MX",
+    "moneda_reporte": "USD",
+    "umbral_reporte_min_usd": 20
+  },
+  "cuentas": [
+    {
+      "id": "tiktok_principal",
+      "plataforma": "tiktok",
+      "usuario": "@tu_usuario",
+      "conectado_en_whop": true,
+      "_nota": "La cuenta DEBE estar enlazada en Whop, si no, las vistas no se rastrean y no pagan."
+    },
+    {
+      "id": "ig_principal",
+      "plataforma": "instagram",
+      "usuario": "@tu_usuario",
+      "conectado_en_whop": true
+    }
+  ],
+  "publicacion": {
+    "modo": "cola",
+    "_modos_disponibles": "cola | api_tiktok | api_instagram | programador",
+    "_explicacion": "'cola' prepara todo y TU haces clic final (unico modo 100% seguro). 'api_*' requiere que tu app pase la auditoria de la plataforma. 'programador' usa Metricool/Buffer/Later/Postiz.",
+    "max_posts_por_dia_por_cuenta": 3,
+    "minuto_entre_posts": 45
+  },
+  "tiktok_api": {
+    "client_key": "",
+    "client_secret": "",
+    "access_token": "",
+    "refresh_token": "",
+    "auditoria_aprobada": false,
+    "_nota": "Sin 'auditoria_aprobada': true, TODOS los posts salen privados (SELF_ONLY) y no generan vistas ni dinero."
+  },
+  "instagram_api": {
+    "ig_user_id": "",
+    "access_token": "",
+    "_nota": "Requiere cuenta Instagram Business/Creator + app Meta verificada + pagina de Facebook enlazada."
+  },
+  "ia_video": {
+    "proveedor": "opusclip",
+    "_proveedores": "opusclip | capcut | sendshort | clipwing | veo | kling",
+    "api_key": "",
+    "clips_por_vod": 6
+  },
+  "llm": {
+    "proveedor": "openai",
+    "modelo": "gpt-4o-mini",
+    "api_key": "",
+    "_nota": "Solo se usa para redactar ganchos/copys y para el brief de edicion. No inventa datos de pago."
+  },
+  "reglas_duras": {
+    "solo_assets_licenciados_por_campana": true,
+    "prohibido_clonar_videos_de_otros_clippers": true,
+    "divulgacion_obligatoria": "#ad #sponsored",
+    "marcas_agua_prohibidas": true,
+    "bloquear_categorias": [
+      "apuestas",
+      "casino",
+      "cripto sin registro CNBV",
+      "salud sin evidencia",
+      "adulto"
+    ],
+    "_por_que": "Whop filtra vistas duplicadas y bots. TikTok rechaza marcas de agua y exige divulgacion de contenido comercial. Un ban pierde todo el saldo pendiente."
+  },
+  "proveedores": {
+    "_comentario": "Herramientas de IA de video. Ver clipper/providers/__init__.py para el estado real de cada API.",
+    "opusclip": {
+      "api_key": "",
+      "brand_template_id": "",
+      "idioma": "es",
+      "webhook": "",
+      "_nota": "API real (https://api.opus.pro/api). El help center oficial dice que el acceso esta en beta cerrada para planes anuales de alto volumen; el sitio comercial dice que empieza en Pro. Si tu plan no la incluye, la llamada devolvera 401/403 y el sistema te lo dira en vez de reventar."
+    },
+    "sendshort": {
+      "_nota": "Sin API publica. Se usa en modo asistido: main.py proveedor-preparar genera el brief y la carpeta de trabajo."
+    },
+    "capcut": {
+      "_nota": "Sin API publica de renderizado. Igual que SendShort. La opcion automatizable es un generador comunitario de archivos draft (CapCutAPI/VectCutAPI, Apache-2.0), que no es producto oficial de CapCut."
+    },
+    "_regla_invariante": "Ningun video vuelve a la cola de publicacion sin pasar otra vez por compliance, incluido el detector de marca de agua. El plan gratuito de OpusClip exporta CON marca de agua y TikTok rechaza esos videos."
+  },
+  "notificaciones": {
+    "canales": ["telegram"],
+    "telegram": {
+      "_como_se_crea_el_bot": "@BotFather en Telegram → /newbot → copia el token",
+      "_como_se_obtiene_chat_id": "manda /start al bot y abre https://api.telegram.org/bot<TOKEN>/getUpdates",
+      "_limites_reales": "1 mensaje por segundo por chat; archivos adjuntos hasta 50 MB",
+      "bot_token": "",
+      "chat_id": ""
+    },
+    "webhook": {
+      "url": "",
+      "_nota": "Opcional. Slack, Discord, ntfy o cualquier endpoint que acepte un POST JSON."
+    },
+    "_que_envia": "el video adjunto + copy sugerido + botones Aprobar / Rechazar",
+    "_por_que_el_copy_va_en_el_mensaje": "En modo borrador de TikTok la API no permite fijar el caption, asi que se copia dentro de la app."
+  },
+
+  "auto": {
+    "proveedor": "opusclip",
+    "plataforma": "tiktok",
+    "max_por_cuenta_dia": 8,
+    "_tope_duro": "clipper/auto.py impone TOPE_DURO_DIA = 25 por cuenta y dia. No se puede subir por config: publicar de mas es el patron que dispara la deteccion de spam.",
+    "_que_si_hace_solo": "elige campana, genera briefs, envia a la herramienta con API, cosecha el render, pasa la compuerta y deja el clip en la cola.",
+    "_que_nunca_hace_solo": "publicar. El clic final es del operador. Tampoco salta la compuerta ni el detector de marca de agua."
+  },
+  "_credenciales": {
+    "_como_se_guardan": "python main.py secretos-set --proveedor opusclip --campo api_key  (la pegas sin que se vea)",
+    "_niveles": [
+      "1. variable de entorno CLIPPER_SECRET_<PROVEEDOR>_<CAMPO>  (nada toca el disco)",
+      "2. secrets.enc  - Fernet + PBKDF2-SHA256, 390k iteraciones, con tu passphrase (requiere pip install cryptography)",
+      "3. secrets.local.json - chmod 600, en .gitignore. NO es cifrado, solo permisos."
+    ],
+    "_que_no_se_guarda": "Usuarios y contrasenas de estas plataformas. Automatizar el login viola sus terminos y una contrasena da acceso a todo; una API key se revoca en un clic. Corre `python main.py secretos` para ver donde se genera cada key."
+  }
+}

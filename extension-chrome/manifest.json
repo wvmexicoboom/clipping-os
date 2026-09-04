@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Clipping OS — Capturador de campanas",
+  "version": "1.0.0",
+  "description": "Captura los datos visibles de una campana de clipping y los exporta al pipeline local. No automatiza clics ni llena formularios de redes sociales.",
+  "permissions": ["activeTab", "storage", "downloads", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_title": "Abrir Clipping OS",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icon.svg",
+    "48": "icon.svg",
+    "128": "icon.svg"
+  }
+}

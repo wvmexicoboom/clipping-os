@@ -1,0 +1,7 @@
+demo/
+__pycache__/
+*.pyc
+.git/
+data/
+secrets.local.json
+secrets.enc
