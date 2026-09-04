@@ -284,6 +284,10 @@ class Handler(BaseHTTPRequestHandler):
             # Solo estado y muestra enmascarada. El valor completo no sale nunca.
             return self._json([{k: v for k, v in p.items() if k != "requiere"}
                                for p in secrets.inventario()])
+        if self.path == "/descargar/sistema":
+            return self._descarga_zip()
+        if self.path == "/descargar/memoria":
+            return self._descarga_memoria()
         if self.path == "/":
             return self._html()
         if self.path == "/credenciales":
@@ -291,6 +295,57 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith("/autorizar"):
             return self._html_autorizar()
         self.send_error(404)
+
+    # ---- Descargas: sistema completo (.zip) y memoria del proyecto (.md) ----
+    def _raiz_proyecto(self):
+        import os
+        return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    def _descarga_zip(self):
+        # Empaqueta el codigo fuente en vuelo. Excluye secretos, bases de datos,
+        # caches y artefactos: lo que se descarga es el sistema, no tus datos.
+        import io, os, zipfile
+        raiz = self._raiz_proyecto()
+        EXCLUIR_DIRS = {".git", "__pycache__", ".venv", "salida", "demo", "assets",
+                        "node_modules", ".mypy_cache", ".pytest_cache", ".cache"}
+        EXCLUIR_EXT = {".db", ".log", ".pyc", ".zip"}
+        EXCLUIR_ARCH = {"config.json", "secrets.local.json", "secrets.enc",
+                        "tunel_url.txt", ".gitignore"}
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+            for dirpath, dirnames, filenames in os.walk(raiz):
+                dirnames[:] = [d for d in dirnames if d not in EXCLUIR_DIRS]
+                for fn in filenames:
+                    if fn in EXCLUIR_ARCH or os.path.splitext(fn)[1] in EXCLUIR_EXT:
+                        continue
+                    full = os.path.join(dirpath, fn)
+                    try:
+                        z.write(full, os.path.relpath(full, raiz))
+                    except OSError:
+                        pass
+        datos = buf.getvalue()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/zip")
+        self.send_header("Content-Disposition", 'attachment; filename="clipping-os-sistema.zip"')
+        self.send_header("Content-Length", str(len(datos)))
+        self.end_headers()
+        self.wfile.write(datos)
+
+    def _descarga_memoria(self):
+        import os
+        ruta = os.path.join(self._raiz_proyecto(), "docs", "MEMORIA.md")
+        try:
+            with open(ruta, "rb") as f:
+                datos = f.read()
+        except OSError:
+            return self.send_error(404, "MEMORIA.md no encontrado")
+        self.send_response(200)
+        self.send_header("Content-Type", "text/markdown; charset=utf-8")
+        self.send_header("Content-Disposition",
+                         'attachment; filename="MEMORIA-proyecto.md"')
+        self.send_header("Content-Length", str(len(datos)))
+        self.end_headers()
+        self.wfile.write(datos)
 
     def _html_autorizar(self):
         from urllib.parse import parse_qs, urlparse
@@ -454,6 +509,11 @@ o en <code>secrets.enc</code> si las guardaste con passphrase desde la CLI.</foo
 <h1>Clipping OS</h1>
 <p class="sub">Panel de rendimiento. Las cifras son del modelo de pago real: vistas
 verificadas, umbral minimo, tope por clip, comision de plataforma y presupuesto restante.</p>
+<div class="card" style="margin:14px 0;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+  <a href="/descargar/sistema" style="background:#238636;color:#fff;padding:11px 16px;border-radius:8px;text-decoration:none;font-weight:650">⬇ Descargar sistema completo (.zip)</a>
+  <a href="/descargar/memoria" style="background:#1f6feb;color:#fff;padding:11px 16px;border-radius:8px;text-decoration:none;font-weight:650">⬇ Descargar memoria del proyecto (.md)</a>
+  <span style="color:var(--mut);font-size:13px;max-width:320px">La memoria guarda todo el proyecto: pégala en un chat nuevo de Arena para retomar conmigo.</span>
+</div>
 <div class="grid">
  <div class="card"><div class="k">Ganancia estimada neta</div><div class="v money">${r['ganancia_estimada_neta_usd']:.2f}</div></div>
  <div class="card"><div class="k">Cobrado realmente</div><div class="v">${r['cobrado_real_usd']:.2f}</div></div>
